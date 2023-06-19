@@ -4,6 +4,7 @@
 #include "ofMain.h"
 #include "../PingPongBuffer.h"
 #include <glm/ext/vector_float4.hpp>
+#include "../BlobGUI.h"
 
 class ofApp : public ofBaseApp {
 private:
@@ -20,8 +21,13 @@ private:
 	int width;
 	int height;
 
+	ofxPanel gui;
+	BlobGUI blobGUI;
+
 	void setupBufferTrailMap();
 	void setupBufferAgents();
+	void setupGUI();
+	void updateSettings();
 
 public:
 	void setup();

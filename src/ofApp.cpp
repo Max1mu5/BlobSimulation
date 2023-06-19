@@ -5,7 +5,6 @@
 void ofApp::setup() {
 	ofEnableGLDebugLog();
 
-
 	ofDisableArbTex();
 	ofSeedRandom();
 	ofBackground(128, 0, 128);
@@ -29,11 +28,15 @@ void ofApp::setup() {
 	bufferAgents.bindBase(GL_SHADER_STORAGE_BUFFER, 0);
 	doubleBufferTrailMap.src->bindBase(GL_SHADER_STORAGE_BUFFER, 1);
 	doubleBufferTrailMap.dst->bindBase(GL_SHADER_STORAGE_BUFFER, 2);
+
+	setupGUI();
 }
 
 //--------------------------------------------------------------
 void ofApp::update() {
 	ofSetWindowTitle(ofToString(ofGetFrameRate()));
+
+	updateSettings();
 
 	doubleBufferTrailMap.swap();
 	doubleBufferTrailMap.src->bindBase(GL_SHADER_STORAGE_BUFFER, 1);
@@ -48,6 +51,8 @@ void ofApp::update() {
 	agentComputeShader.setUniform1i("sensorSize", Settings::agentsSensorSize);
 	agentComputeShader.setUniform1f("senseAngle", Settings::agentSenseAngle);
 	agentComputeShader.setUniform1f("steerStrength", Settings::agentSteerStrength);
+	agentComputeShader.setUniform1f("rotateAngle", Settings::agentRotateAngle);
+	agentComputeShader.setUniform1f("pheromoneStrength", Settings::agentPheromoneStrength);
 	agentComputeShader.dispatchCompute((Settings::agentsAmount + 1024 - 1) / 1024, 1, 1);
 
 	agentComputeShader.end();
@@ -73,6 +78,8 @@ void ofApp::draw() {
 	trailMapShader.setUniform4f("baseColor", ofColor::black);
 	ofDrawRectangle(0, 0, ofGetWidth(), ofGetHeight());
 	trailMapShader.end();
+
+	gui.draw();
 }
 
 //--------------------------------------------------------------
@@ -97,6 +104,34 @@ void ofApp::setupBufferAgents() {
 		agent.z = ofRandom(0, 359);
 	}
 	bufferAgents.allocate(agents, GL_DYNAMIC_DRAW);
+}
+
+void ofApp::setupGUI() {
+	gui.setup();
+
+	gui.add(blobGUI.steerSlider.setup("Steer", 6, 0, 20));
+	gui.add(blobGUI.angleSlider.setup("Angle", 6, 0, 60));
+	gui.add(blobGUI.senseDistanceSlider.setup("SenseDistance", 20, 1, 100));
+	gui.add(blobGUI.decayRateSlider.setup("Decay", 0.05, 0.0, 3.0));
+	gui.add(blobGUI.diffuseRateSlider.setup("Diffuse", 0.06, 0, 3));
+	gui.add(blobGUI.speedSlider.setup("Speed", 1.0, 0, 5));
+	gui.add(blobGUI.maxTrailDensitySlider.setup("Max Trail Density", 200, 0, 300));
+	gui.add(blobGUI.sensorSizeSlider.setup("Sensor Size", 1, 0, 4));
+	gui.add(blobGUI.rotateAngleSlider.setup("Rotate angle", 0, -2, 2));
+	gui.add(blobGUI.pheromoneStrengthSlider.setup("Pheromone strength", 3, 0, 10));
+}
+
+void ofApp::updateSettings() {
+	Settings::agentSteerStrength = blobGUI.steerSlider;
+	Settings::agentSenseAngle = blobGUI.angleSlider;
+	Settings::agentsSenseDistance = blobGUI.senseDistanceSlider;
+	Settings::diffuseRate = blobGUI.diffuseRateSlider;
+	Settings::decayRate = blobGUI.decayRateSlider;
+	Settings::agentsSpeed = blobGUI.speedSlider;
+	Settings::maxTrailDensity = blobGUI.maxTrailDensitySlider;
+	Settings::agentsSensorSize = blobGUI.sensorSizeSlider;
+	Settings::agentRotateAngle = blobGUI.rotateAngleSlider;
+
 }
 
 //--------------------------------------------------------------

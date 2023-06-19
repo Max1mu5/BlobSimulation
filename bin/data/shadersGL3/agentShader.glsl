@@ -31,6 +31,8 @@ uniform float senseDistance;
 uniform int sensorSize;
 uniform float senseAngle;
 uniform float steerStrength;
+uniform float rotateAngle;
+uniform float pheromoneStrength;
 
 
 float sense(vec4 agent, float angleOffset) {
@@ -71,7 +73,7 @@ void main() {
 		agent.z = mod(agent.z + (steerStrength), 360.0);
 	}
 
-	vec2 direction = vec2(cos(agent.z), sin(agent.z));
+	vec2 direction = vec2(cos(agent.z + rotateAngle), sin(agent.z + rotateAngle));
 	vec2 newPos = agent.xy + direction * speed;
 	if (newPos.x < 0 || newPos.x > width - 1 || newPos.y < 0 || newPos.y > height - 1) {
 		newPos.x = min(width - 1, max(0, agent.x));
@@ -83,5 +85,5 @@ void main() {
 
 	int index = int(newPos.x) + int(newPos.y) * width;
 	float val = oldTrailMap[index];
-	oldTrailMap[index] = min(val + 3, maxTrailDensity);
+	oldTrailMap[index] = min(val + pheromoneStrength, maxTrailDensity);
 }

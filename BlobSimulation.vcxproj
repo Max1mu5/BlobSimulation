@@ -180,6 +180,7 @@
     <PostBuildEvent />
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="BlobGUI.cpp" />
     <ClCompile Include="PingPongBuffer.cpp" />
     <ClCompile Include="Settings.cpp" />
     <ClCompile Include="src\main.cpp" />
@@ -196,6 +197,7 @@
     <ClCompile Include="..\..\..\addons\ofxGui\src\ofxToggle.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="BlobGUI.h" />
     <ClInclude Include="PingPongBuffer.h" />
     <ClInclude Include="Settings.h" />
     <ClInclude Include="src\ofApp.h" />
