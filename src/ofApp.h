@@ -20,8 +20,6 @@ private:
 	int width;
 	int height;
 
-	int agentsAmount;
-
 	void setupBufferTrailMap();
 	void setupBufferAgents();
 
@@ -43,3 +41,4 @@ public:
 	void gotMessage(ofMessage msg);
 		
 };
+

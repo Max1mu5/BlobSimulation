@@ -1,0 +1,9 @@
+*.suo
+*.user
+*.userosscache
+*.sln.docstates
+.vs/
+obj/
+BlobSimulation_debug.exe
+BlobSimulation_debug.exp
+BlobSimulation_debug.pdb

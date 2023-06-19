@@ -1,4 +1,5 @@
 #include "ofApp.h"
+#include "../Settings.h"
 
 //--------------------------------------------------------------
 void ofApp::setup() {
@@ -12,7 +13,6 @@ void ofApp::setup() {
 
 	width = ofGetWidth();
 	height = ofGetHeight();
-	agentsAmount = 10000;
 
 	trailMapShader.load("shadersGL3/shader");
 	//trailMapShader.linkProgram();
@@ -42,16 +42,21 @@ void ofApp::update() {
 	agentComputeShader.begin();
 	agentComputeShader.setUniform1i("width", width);
 	agentComputeShader.setUniform1i("height", height);
-	agentComputeShader.setUniform1f("speed", 1);
-	agentComputeShader.setUniform1f("maxTrailDensity", 200);
-	agentComputeShader.dispatchCompute((agentsAmount + 1024 - 1) / 1024, 1, 1);
+	agentComputeShader.setUniform1f("speed", Settings::agentsSpeed);
+	agentComputeShader.setUniform1f("maxTrailDensity", Settings::maxTrailDensity);
+	agentComputeShader.setUniform1f("senseDistance", Settings::agentsSenseDistance);
+	agentComputeShader.setUniform1i("sensorSize", Settings::agentsSensorSize);
+	agentComputeShader.setUniform1f("senseAngle", Settings::agentSenseAngle);
+	agentComputeShader.setUniform1f("steerStrength", Settings::agentSteerStrength);
+	agentComputeShader.dispatchCompute((Settings::agentsAmount + 1024 - 1) / 1024, 1, 1);
+
 	agentComputeShader.end();
 
 	trailMapComputeShader.begin();
 	trailMapComputeShader.setUniform1i("width", width);
 	trailMapComputeShader.setUniform1i("height", height);
-	trailMapComputeShader.setUniform1f("diffuseRate", 0.06);
-	trailMapComputeShader.setUniform1f("decayRate", 0.01);
+	trailMapComputeShader.setUniform1f("diffuseRate", Settings::diffuseRate);
+	trailMapComputeShader.setUniform1f("decayRate", Settings::decayRate);
 	trailMapComputeShader.dispatchCompute(height * width / 1000, 1, 1);
 	trailMapComputeShader.end();
 }
@@ -61,12 +66,12 @@ void ofApp::draw() {
 	trailMapShader.begin();
 	trailMapShader.setUniform1i("width", width);
 	trailMapShader.setUniform1i("height", height);
-	trailMapShader.setUniform1f("decay", 0.01);
-	trailMapShader.setUniform1f("maxTrailDensity", 200);
+	trailMapShader.setUniform1f("decay", Settings::decayRate);
+	trailMapShader.setUniform1f("maxTrailDensity", Settings::maxTrailDensity);
 	trailMapShader.setUniform1f("xRatio", float(ofGetWidth()) / float(width));
 	trailMapShader.setUniform1f("yRatio", float(ofGetHeight()) / float(height));
 	trailMapShader.setUniform4f("baseColor", ofColor::black);
-	ofDrawRectangle(0, 0, width, height);
+	ofDrawRectangle(0, 0, ofGetWidth(), ofGetHeight());
 	trailMapShader.end();
 }
 
@@ -84,12 +89,12 @@ void ofApp::setupBufferTrailMap() {
 //--------------------------------------------------------------
 void ofApp::setupBufferAgents() {
 	agents.clear();
-	agents.resize(agentsAmount);
+	agents.resize(Settings::agentsAmount);
 	ofVec2f spawnPoint = ofVec2f(width / 2, height / 2);
 	for (auto& agent : agents) {
 		agent.x = spawnPoint.x;
 		agent.y = spawnPoint.y;
-		agent.z = ofRandom(60, 359);
+		agent.z = ofRandom(0, 359);
 	}
 	bufferAgents.allocate(agents, GL_DYNAMIC_DRAW);
 }
